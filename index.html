@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <link rel="stylesheet" href="estilo.css">
+    
+        <title>KTextil</title>
+    </head>
+
+    <body>  
+
+        <!-- BLOCO 1: LOGO -->
+        <header class="app-header">
+            <div class="container-logo">
+                <img src="img/logo.png" alt="Logotipo KTextil" width="280" height="100">
+            </div>
+        </header>
+
+        <!-- BLOCO 2: BOTÕES -->
+        <nav class="navbar-horizontal">
+            <div class="nav-menu">
+                <button class="nav-btn active" data-target="tela-estoque">📦 Estoque</button>
+                <button class="nav-btn" data-target="tela-pedido">🛒 Pedidos</button>
+                <button class="nav-btn" data-target="tela-vendas">💰 Vendas</button>
+            </div>
+        </nav>
+
+        <!-- BLOCO 3: DADOS DO BACK END, ESTOQUE, VENDAS -->
+        <main class="content-container">
+            
+            <!-- TELA DE ESTOQUE ( Utilizada pelo estoquista para gerenciar o inventário ) -->
+            <section id="tela-estoque" class="tab-content">
+                <!-- GET AQUI PRA BUSCAR O ESTOQUE DO BACK END -->
+                <h2>Gerenciamento de Estoque</h2>
+                <p>Aqui ficam as tabelas de tecidos, metros disponíveis e cores.</p>
+                <div id="estoque-content">
+                    <em>Carregando dados do estoque...</em>
+                </div>
+            </section>
+
+            <!-- TELA DE PEDIDOS ( Utilizada pelo vendedor para cadastrar vendas feitas ) -->
+            <section id="tela-pedido" class="tab-content hidden">
+                <!-- POST AQUI PARA INCLUIR PEDIDOS NO BACK END -->
+                <h2>Gerenciamento de Pedidos</h2>
+                <p>Informe os dados do pedido abaixo:</p>
+                <form id="pedido-form">
+                    <label>
+                        Produto:
+                        <input type="text" name="produto" required />
+                    </label>
+                    <label>
+                        Quantidade:
+                        <input type="number" name="metragem" min="1" required />
+                    </label>    
+                    <label>
+                        Cliente:
+                        <input type="text" name="cliente" />
+                    </label>
+                    <button type="submit">Enviar Pedido</button>
+                </form>
+                <div id="pedido-result" aria-live="polite"></div>
+            </section>
+
+            <!-- TELA DE VENDAS ( Utilizada pelo gerente para visualizar relatórios e métricas de vendas ) -->
+            <section id="tela-vendas" class="tab-content hidden">
+                <!-- GET AQUI PRA BUSCAR OS RELATÓRIOS DE VENDAS DO BACK END -->
+                <h2>Painel de Vendas</h2>
+                <p>Aqui ficam os relatórios de pedidos, faturamento e clientes.</p>
+                <div id="vendas-content">
+                    <em>Carregando dados de vendas...</em>
+                </div>
+            </section>
+          
+        </main>
+
+        <script src="interacoes.js"></script>
+
+    </body>
+
+</html>

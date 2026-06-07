@@ -1,0 +1,107 @@
+/* 1. Header (Logo no Topo) */
+.app-header {
+    text-align: center; /* Centraliza o logo e os textos no topo */
+    padding: 20px;
+    background-color: #ffffff;
+    margin-bottom: 20px; /* Dá um espaço antes de começar os botões */
+}
+
+/* 2. Barra de Botões (Alinhada à esquerda) */
+.navbar-horizontal {
+    display: flex;
+    justify-content: flex-start; /* Força os botões a começarem na esquerda */
+    padding: 0 40px; /* Margem nas laterais para não colar na borda da tela */
+    margin-bottom: 15px; /* Espaço entre os botões e o quadrado de conteúdo */
+}
+
+.nav-menu {
+    display: flex;
+    gap: 15px; /* Espaçamento entre o Botão 1 e Botão 2 */
+}
+
+.nav-btn {
+    background-color: #E0E0E0; /* Um cinza claro de fundo para o botão desativado */
+    border: 2px solid #707070;  /* A borda cinza do seu rascunho */
+    color: #4A4A4A;             /* Cor do texto um cinza mais escuro para dar leitura */
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;  /* Deixa a troca de cor suave ao clicar */
+}
+
+/* Efeito sutil ao passar o mouse por cima do botão desativado */
+.nav-btn:hover {
+    background-color: #777777; /* Um cinza um pouco mais escuro no hover */
+}
+
+/* COMO O BOTÃO FICA QUANDO FOR CLICADO (Ativado) */
+.nav-btn.active {
+    background-color: #1A2F4C; 
+    border-color: #1A2F4C;     
+    color: #FFFFFF;           
+}
+
+/* Efeito sutil ao passar o mouse por cima do botão desativado */
+.nav-btn.active:hover {
+    background-color: #777777; /* Um cinza um pouco mais escuro no hover */
+}
+
+.content-container {
+    padding: 0 40px; /* Alinha o bloco com os botões */
+}
+
+.tab-content {
+    background: #ffffff;
+    border: 2px solid #707070; /* Borda do bloco grande */
+    padding: 40px;
+    min-height: 550px; 
+    border-radius: 4px;
+}
+
+#pedido-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 420px;
+}
+
+#pedido-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+    color: #333333;
+}
+
+#pedido-form input {
+    padding: 10px 12px;
+    border: 1px solid #B0B0B0;
+    border-radius: 4px;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#pedido-form button {
+    align-self: flex-start;
+    background-color: #1A2F4C;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+#pedido-form button:hover {
+    background-color: #16304d;
+}
+
+/* Classe para esconder a tela inativa */
+.hidden {
+    display: none !important;
+}
