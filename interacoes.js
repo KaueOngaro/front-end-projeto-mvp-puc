@@ -1,3 +1,6 @@
+// URL base da API do backend
+const API_BASE = 'http://localhost:5000';
+
 // 1. Seleciona todos os botões e todas as seções (telas) de conteúdo
 const botoes = document.querySelectorAll('.nav-btn');
 const telas = document.querySelectorAll('.tab-content');
@@ -48,16 +51,20 @@ function fetchEstoque() {
     const container = document.getElementById('estoque-content');
     if (!container) return;
     container.innerHTML = '<em>Carregando dados do estoque...</em>';
-    fetch('/status_estoque')
+    fetch(`${API_BASE}/estoque`)
         .then(response => {
             if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
             return response.json();
         })
         .then(data => {
-            container.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = '<p>Nenhum tecido encontrado.</p>';
+                return;
+            }
+            container.innerHTML = renderEstoqueTable(data);
         })
         .catch(err => {
-            container.innerHTML = '<div class="error">Erro ao carregar estoque: ' + err.message + '</div>';
+            container.innerHTML = `<div class="error">Erro ao carregar estoque: ${err.message}</div>`;
         });
 }
 
@@ -65,16 +72,20 @@ function fetchVendas() {
     const container = document.getElementById('vendas-content');
     if (!container) return;
     container.innerHTML = '<em>Carregando dados de vendas...</em>';
-    fetch('/status_vendas')
+    fetch(`${API_BASE}/relatorio`)
         .then(response => {
             if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
             return response.json();
         })
         .then(data => {
-            container.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = '<p>Nenhuma venda registrada.</p>';
+                return;
+            }
+            container.innerHTML = renderVendasTable(data);
         })
         .catch(err => {
-            container.innerHTML = '<div class="error">Erro ao carregar vendas: ' + err.message + '</div>';
+            container.innerHTML = `<div class="error">Erro ao carregar vendas: ${err.message}</div>`;
         });
 }
 
@@ -82,7 +93,6 @@ function setupPedidoForm() {
     const form = document.getElementById('pedido-form');
     const result = document.getElementById('pedido-result');
     if (!form) return;
-    // evita múltiplos listeners
     if (form.__bound) return;
     form.__bound = true;
 
@@ -90,27 +100,120 @@ function setupPedidoForm() {
         e.preventDefault();
         const formData = new FormData(form);
         const body = {
-            produto: formData.get('produto'),
-            quantidade: Number(formData.get('quantidade')),
-            cliente: formData.get('cliente')
+            vendedor_id: 1,
+            itens: [
+                {
+                    tecido_id: 1,
+                    metragem_vendida: Number(formData.get('metragem'))
+                }
+            ]
         };
         if (result) result.textContent = 'Enviando pedido...';
 
-        fetch('/adiciona_pedido', {
+        fetch(`${API_BASE}/venda`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         })
             .then(response => {
                 if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
-                return response.json().catch(() => ({}));
+                return response.json();
             })
             .then(data => {
-                if (result) result.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                if (result) result.innerHTML = renderPedidoResult(data);
                 form.reset();
             })
             .catch(err => {
                 if (result) result.textContent = 'Erro ao enviar pedido: ' + err.message;
             });
+    });
+}
+
+function renderEstoqueTable(estoque) {
+    const rows = estoque.map(item => `
+        <tr>
+            <td>${item.id}</td>
+            <td>${item.nome}</td>
+            <td>${item.quantidade_metros}</td>
+        </tr>
+    `).join('');
+
+    return `
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tecido</th>
+                    <th>Quantidade (m)</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+function renderVendasTable(vendas) {
+    const rows = vendas.map(venda => `
+        <tr>
+            <td>${venda.id}</td>
+            <td>${venda.vendedor_nome || venda.vendedor_id}</td>
+            <td>${formatDate(venda.data_venda)}</td>
+            <td>${venda.itens?.length || 0}</td>
+            <td>${renderItensVenda(venda.itens)}</td>
+        </tr>
+    `).join('');
+
+    return `
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Vendedor</th>
+                    <th>Data</th>
+                    <th>Quantidade</th>
+                    <th>Itens</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+function renderItensVenda(itens) {
+    if (!Array.isArray(itens) || itens.length === 0) {
+        return '<em>Sem itens</em>';
+    }
+
+    return itens.map(item => `
+        <div class="item-venda">
+            <strong>${item.tecido_nome || item.tecido_id}</strong>: ${item.metragem_vendida} m
+        </div>
+    `).join('');
+}
+
+function renderPedidoResult(data) {
+    if (!data || !data.id) {
+        return '<p>Resposta inesperada do servidor.</p>';
+    }
+
+    return `
+        <div class="pedido-sucesso">
+            <p><strong>Pedido enviado com sucesso!</strong></p>
+            <p>ID da venda: ${data.id}</p>
+            <p>Vendedor: ${data.vendedor_nome || data.vendedor_id}</p>
+            <p>Data: ${formatDate(data.data_venda)}</p>
+        </div>
+    `;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
     });
 }

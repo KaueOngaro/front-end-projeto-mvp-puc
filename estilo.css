@@ -101,6 +101,53 @@
     background-color: #16304d;
 }
 
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid #D0D0D0;
+    padding: 12px 14px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #F0F4F8;
+    color: #1A2F4C;
+    font-weight: 700;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #FAFBFC;
+}
+
+.item-venda {
+    margin-bottom: 6px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background: #F7F8FA;
+    color: #333333;
+}
+
+.pedido-sucesso {
+    background: #E7F5E9;
+    border: 1px solid #C6E0C8;
+    padding: 16px;
+    border-radius: 6px;
+    max-width: 480px;
+}
+
+.error {
+    color: #A22929;
+    background: #FDE5E5;
+    border: 1px solid #E3B2B2;
+    padding: 14px;
+    border-radius: 6px;
+}
+
 /* Classe para esconder a tela inativa */
 .hidden {
     display: none !important;
