@@ -49,16 +49,16 @@
                 <p>Informe os dados do pedido abaixo:</p>
                 <form id="pedido-form">
                     <label>
-                        Produto:
-                        <input type="text" name="produto" required />
+                        Vendedor:
+                        <select name="vendedor_id" required></select>
                     </label>
                     <label>
-                        Quantidade:
-                        <input type="number" name="metragem" min="1" required />
-                    </label>    
+                        Produto (Tecido):
+                        <select name="tecido_id" required></select>
+                    </label>
                     <label>
-                        Cliente:
-                        <input type="text" name="cliente" />
+                        Quantidade (metros):
+                        <input type="number" name="metragem" step="0.1" min="0.1" required />
                     </label>
                     <button type="submit">Enviar Pedido</button>
                 </form>

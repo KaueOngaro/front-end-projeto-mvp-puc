@@ -96,15 +96,63 @@ function setupPedidoForm() {
     if (form.__bound) return;
     form.__bound = true;
 
+    // Carrega vendedores
+    fetch(`${API_BASE}/vendedores`)
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao carregar vendedores');
+            return response.json();
+        })
+        .then(vendedores => {
+            const select = form.querySelector('select[name="vendedor_id"]');
+            if (select) {
+                vendedores.forEach(v => {
+                    const option = document.createElement('option');
+                    option.value = v.id;
+                    option.textContent = v.nome;
+                    select.appendChild(option);
+                });
+            }
+        })
+        .catch(err => console.error('Erro ao carregar vendedores:', err));
+
+    // Carrega tecidos
+    fetch(`${API_BASE}/estoque`)
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao carregar tecidos');
+            return response.json();
+        })
+        .then(tecidos => {
+            const select = form.querySelector('select[name="tecido_id"]');
+            if (select) {
+                tecidos.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t.id;
+                    option.textContent = `${t.nome} (${t.quantidade_metros}m)`;
+                    select.appendChild(option);
+                });
+            }
+        })
+        .catch(err => console.error('Erro ao carregar tecidos:', err));
+
+    // Listener do formulário
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(form);
+        const vendedor_id = Number(formData.get('vendedor_id'));
+        const tecido_id = Number(formData.get('tecido_id'));
+        const metragem = Number(formData.get('metragem'));
+
+        if (!vendedor_id || !tecido_id || !metragem) {
+            if (result) result.textContent = 'Erro: Preencha todos os campos.';
+            return;
+        }
+
         const body = {
-            vendedor_id: 1,
+            vendedor_id: vendedor_id,
             itens: [
                 {
-                    tecido_id: 1,
-                    metragem_vendida: Number(formData.get('metragem'))
+                    tecido_id: tecido_id,
+                    metragem_vendida: metragem
                 }
             ]
         };
@@ -124,7 +172,7 @@ function setupPedidoForm() {
                 form.reset();
             })
             .catch(err => {
-                if (result) result.textContent = 'Erro ao enviar pedido: ' + err.message;
+                if (result) result.innerHTML = `<div class="error">Erro ao enviar pedido: ${err.message}</div>`;
             });
     });
 }
