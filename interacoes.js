@@ -41,8 +41,6 @@ function acaoTela(id) {
         fetchEstoque();
     } else if (id === 'tela-vendas') {
         fetchVendas();
-    } else if (id === 'tela-pedido') {
-        setupPedidoForm();
     }
 }
 
@@ -136,51 +134,6 @@ function fetchVendas() {
             });
     });
 })();
-
-function setupPedidoForm() {
-    const form = document.getElementById('pedido-form');
-    if (!form) return;
-
-    // Carregar vendedores
-    const vendedorSelect = form.querySelector('select[name="vendedor_id"]');
-    if (vendedorSelect && vendedorSelect.children.length === 1) {
-        // Só carregar se vazio
-        fetch(`${API_BASE}/vendedores`)
-            .then(response => {
-                if (!response.ok) throw new Error('Erro ao carregar vendedores');
-                return response.json();
-            })
-            .then(vendedores => {
-                vendedores.forEach(v => {
-                    const option = document.createElement('option');
-                    option.value = v.id;
-                    option.textContent = v.nome;
-                    vendedorSelect.appendChild(option);
-                });
-            })
-            .catch(err => console.error('Erro ao carregar vendedores:', err));
-    }
-
-    // Carregar tecidos
-    const tecidoSelect = form.querySelector('select[name="tecido_id"]');
-    if (tecidoSelect && tecidoSelect.children.length === 1) {
-        // Só carregar se vazio
-        fetch(`${API_BASE}/estoque`)
-            .then(response => {
-                if (!response.ok) throw new Error('Erro ao carregar tecidos');
-                return response.json();
-            })
-            .then(tecidos => {
-                tecidos.forEach(t => {
-                    const option = document.createElement('option');
-                    option.value = t.id;
-                    option.textContent = `${t.nome} (${t.quantidade_metros}m)`;
-                    tecidoSelect.appendChild(option);
-                });
-            })
-            .catch(err => console.error('Erro ao carregar tecidos:', err));
-    }
-}
 
 function renderEstoqueTable(estoque) {
     const rows = estoque.map(item => `

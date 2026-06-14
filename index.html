@@ -44,21 +44,20 @@
 
             <!-- TELA DE PEDIDOS ( Utilizada pelo vendedor para cadastrar vendas feitas ) -->
             <section id="tela-pedido" class="tab-content hidden">
-                <!-- POST AQUI PARA INCLUIR PEDIDOS NO BACK END -->
                 <h2>Gerenciamento de Pedidos</h2>
                 <p>Informe os dados do pedido abaixo:</p>
                 <form id="pedido-form">
                     <label>
-                        Vendedor:
-                        <select name="vendedor_id" required></select>
+                        ID do Vendedor:
+                        <input type="number" name="vendedor_id" placeholder="Ex: 5" min="1" required />
                     </label>
                     <label>
-                        Produto (Tecido):
-                        <select name="tecido_id" required></select>
+                        ID do Produto (Tecido):
+                        <input type="number" name="tecido_id" placeholder="Ex: 12" min="1" required />
                     </label>
                     <label>
                         Quantidade (metros):
-                        <input type="number" name="metragem" step="0.1" min="0.1" required />
+                        <input type="number" name="metragem" step="0.1" min="0.1" placeholder="Ex: 15.5" required />
                     </label>
                     <button type="submit">Enviar Pedido</button>
                 </form>
