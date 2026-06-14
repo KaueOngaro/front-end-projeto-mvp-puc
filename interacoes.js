@@ -89,60 +89,13 @@ function fetchVendas() {
         });
 }
 
-function setupPedidoForm() {
+// Registrar o listener do formulário apenas uma vez
+(function initFormListener() {
     const form = document.getElementById('pedido-form');
     const result = document.getElementById('pedido-result');
     if (!form) return;
 
-    // Remover listeners antigos para evitar duplicação
-    if (form._submitHandler) {
-        form.removeEventListener('submit', form._submitHandler);
-    }
-
-    // Limpar selects existentes
-    const vendedorSelect = form.querySelector('select[name="vendedor_id"]');
-    const tecidoSelect = form.querySelector('select[name="tecido_id"]');
-    if (vendedorSelect) vendedorSelect.innerHTML = '<option value="">Selecione um vendedor...</option>';
-    if (tecidoSelect) tecidoSelect.innerHTML = '<option value="">Selecione um tecido...</option>';
-
-    // Carrega vendedores
-    fetch(`${API_BASE}/vendedores`)
-        .then(response => {
-            if (!response.ok) throw new Error('Erro ao carregar vendedores');
-            return response.json();
-        })
-        .then(vendedores => {
-            if (vendedorSelect) {
-                vendedores.forEach(v => {
-                    const option = document.createElement('option');
-                    option.value = v.id;
-                    option.textContent = v.nome;
-                    vendedorSelect.appendChild(option);
-                });
-            }
-        })
-        .catch(err => console.error('Erro ao carregar vendedores:', err));
-
-    // Carrega tecidos
-    fetch(`${API_BASE}/estoque`)
-        .then(response => {
-            if (!response.ok) throw new Error('Erro ao carregar tecidos');
-            return response.json();
-        })
-        .then(tecidos => {
-            if (tecidoSelect) {
-                tecidos.forEach(t => {
-                    const option = document.createElement('option');
-                    option.value = t.id;
-                    option.textContent = `${t.nome} (${t.quantidade_metros}m)`;
-                    tecidoSelect.appendChild(option);
-                });
-            }
-        })
-        .catch(err => console.error('Erro ao carregar tecidos:', err));
-
-    // Criar novo listener e salvá-lo
-    form._submitHandler = function (e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(form);
         const vendedor_id = Number(formData.get('vendedor_id'));
@@ -181,10 +134,52 @@ function setupPedidoForm() {
             .catch(err => {
                 if (result) result.innerHTML = `<div class="error">Erro ao enviar pedido: ${err.message}</div>`;
             });
-    };
+    });
+})();
 
-    // Adicionar novo listener
-    form.addEventListener('submit', form._submitHandler);
+function setupPedidoForm() {
+    const form = document.getElementById('pedido-form');
+    if (!form) return;
+
+    // Carregar vendedores
+    const vendedorSelect = form.querySelector('select[name="vendedor_id"]');
+    if (vendedorSelect && vendedorSelect.children.length === 1) {
+        // Só carregar se vazio
+        fetch(`${API_BASE}/vendedores`)
+            .then(response => {
+                if (!response.ok) throw new Error('Erro ao carregar vendedores');
+                return response.json();
+            })
+            .then(vendedores => {
+                vendedores.forEach(v => {
+                    const option = document.createElement('option');
+                    option.value = v.id;
+                    option.textContent = v.nome;
+                    vendedorSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Erro ao carregar vendedores:', err));
+    }
+
+    // Carregar tecidos
+    const tecidoSelect = form.querySelector('select[name="tecido_id"]');
+    if (tecidoSelect && tecidoSelect.children.length === 1) {
+        // Só carregar se vazio
+        fetch(`${API_BASE}/estoque`)
+            .then(response => {
+                if (!response.ok) throw new Error('Erro ao carregar tecidos');
+                return response.json();
+            })
+            .then(tecidos => {
+                tecidos.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t.id;
+                    option.textContent = `${t.nome} (${t.quantidade_metros}m)`;
+                    tecidoSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Erro ao carregar tecidos:', err));
+    }
 }
 
 function renderEstoqueTable(estoque) {
